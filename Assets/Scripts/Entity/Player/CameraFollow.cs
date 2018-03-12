@@ -5,6 +5,7 @@ public class CameraFollow : MonoBehaviour {
     public Transform target;
 
     public float smoothSpeed = 10f;
+    public float verticalSmoothSpeed = 5f;
     public Vector3 offset;
 
     private Vector3 playerOffset;
@@ -20,7 +21,7 @@ public class CameraFollow : MonoBehaviour {
         transform.position = target.position + playerOffset;
         transform.LookAt(target.position);
 
-        playerOffset = Quaternion.AngleAxis(Input.GetAxis("Mouse Y") * smoothSpeed, Vector3.right) * playerOffset;
+        playerOffset = Quaternion.AngleAxis(Input.GetAxis("Mouse Y") * verticalSmoothSpeed, Vector3.right) * playerOffset;
         transform.position = target.position + playerOffset;
         transform.LookAt(target.position);
     }

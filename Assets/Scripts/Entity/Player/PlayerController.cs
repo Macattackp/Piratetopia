@@ -5,14 +5,14 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
 
-    public float moveSpeed = 7f;
+    public float walkSpeed = 7f;
     public float sprintSpeed = 15f;
     public float crouchSpeed = 4f;
 
     public float walkTurnSpeed = 10f;
     public float sprintTurnSpeed = 0.001f;
     public float crouchTurnSpeed = 20f;
-    public float turnSpeed;
+    public float turnSpeed=10f;
 
     public float jumpVelocity = 7f;
 
@@ -25,6 +25,7 @@ public class PlayerController : MonoBehaviour
     public CapsuleCollider col;
 
     private Rigidbody rig;
+    private float movementSpeed;
 
     void Start()
     {
@@ -52,82 +53,29 @@ public class PlayerController : MonoBehaviour
     {
         MouseTurn();
         Jump();
-        if (isWalking)
-        {
-            Walk();
-        }
-        else if (isCrouched)
-        {
-            Sneak();
-        }
-        else if (isRunning)
-        {
-            Sprint();
-        }        
+        Walk();
     }
-
-    ////////////WALK/////////////////
+       
     /// <summary>
     /// Main Movement
     /// </summary>
     public void Walk()
     {
+        float x=0f;
+        float z=0f;
+        
         if (Input.GetKey(KeyCode.A))
         {
-            var y = moveSpeed * Time.deltaTime * -2.0f;
-            transform.Translate(y, 0, 0);
+            x = movementSpeed * Time.deltaTime * -2.0f;
         }
         if (Input.GetKey(KeyCode.D))
         {
-            var y = moveSpeed * Time.deltaTime * 2.0f;
-            transform.Translate(y, 0, 0);
+            x = movementSpeed * Time.deltaTime * 2.0f;
         }
-        var z = moveSpeed * Input.GetAxis("Vertical") * Time.deltaTime * 3.0f;
+        z = movementSpeed * Input.GetAxis("Vertical") * Time.deltaTime * 3.0f;
 
-        transform.Translate(0, 0, z);
-       
-    }
-
-    /// <summary>
-    /// Movement Sprint Speed
-    /// </summary>
-    public void Sprint()
-    {
-        if (Input.GetKey(KeyCode.A))
-        {
-            var y = sprintSpeed * Time.deltaTime * -2.0f;
-            transform.Translate(y, 0, 0);
-        }
-        if (Input.GetKey(KeyCode.D))
-        {
-            var y = sprintSpeed * Time.deltaTime * 2.0f;
-            transform.Translate(y, 0, 0);
-        }
-        var z = sprintSpeed * Input.GetAxis("Vertical") * Time.deltaTime * 3.0f;
-
-        transform.Translate(0, 0, z);
-    }
-
-    ////////////SNEAK/////////////////
-    /// <summary>
-    /// Movement Sneak Speed
-    /// </summary>
-    public void Sneak()
-    {
-        if (Input.GetKey(KeyCode.A))
-        {
-            var y = crouchSpeed * Time.deltaTime * -2.0f;
-            transform.Translate(y, 0, 0);
-        }
-        if (Input.GetKey(KeyCode.D))
-        {
-            var y = crouchSpeed * Time.deltaTime * 2.0f;
-            transform.Translate(y, 0, 0);
-        }
-        var z = crouchSpeed * Input.GetAxis("Vertical") * Time.deltaTime * 3.0f;
-
-        transform.Translate(0, 0, z);
-    }
+        transform.Translate(x, 0, z);       
+    }    
 
     /////////////JUMP////////////////////
     /// <summary>
@@ -178,38 +126,31 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
+                isRunning = false;
                 isWalking = false;
                 isCrouched = true;
+                movementSpeed = crouchSpeed;
             }
         }
 
         if (Input.GetKey(KeyCode.LeftShift))
         {
             isWalking = false;
+            isCrouched = false;
             isRunning = true;
-            if (isCrouched)
-            {
-                isCrouched = false;
-            }
+            movementSpeed = sprintSpeed;
         }
         if (Input.GetKeyUp(KeyCode.LeftShift))
         {
             isRunning = false;
             isWalking = true;
         }
-
-        if (isCrouched)
-        {
-            turnSpeed = crouchTurnSpeed;
-        }
-        else if (isRunning)
-        {
-            turnSpeed = sprintTurnSpeed;
-        }
         else if (isWalking)
         {
-            turnSpeed = walkTurnSpeed;
-        }
+            isRunning = false;
+            isCrouched = false;
+            movementSpeed = walkSpeed;
+        }        
     }     
 
     /// <summary>

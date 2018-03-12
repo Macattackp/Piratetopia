@@ -42,9 +42,7 @@ public class PlayerController : MonoBehaviour
 
     //****************MOVEMENT*******************
     /*       1. Movement Overview
-             2. Walk
-             3. Sprint
-             4. Sneak
+             2. Walk         
              5. Jump
              6. Mouse Turn
       ******************************************/
@@ -58,6 +56,7 @@ public class PlayerController : MonoBehaviour
        
     /// <summary>
     /// Main Movement
+    /// movementSpeed set in MovementStates
     /// </summary>
     public void Walk()
     {

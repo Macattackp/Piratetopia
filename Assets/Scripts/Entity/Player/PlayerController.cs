@@ -1,164 +1,167 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+namespace Assets.Scripts.Entity.Player
 {
-
-    public float walkSpeed = 7f;
-    public float sprintSpeed = 15f;
-    public float crouchSpeed = 4f;
-
-    public float walkTurnSpeed = 10f;
-    public float sprintTurnSpeed = 0.001f;
-    public float crouchTurnSpeed = 20f;
-    public float turnSpeed=10f;
-
-    public float jumpVelocity = 7f;
-
-    public bool isCrouched = false;
-    public bool isRunning = false;
-    public bool isWalking = true;
-   
-
-    public LayerMask groundLayers;
-    public CapsuleCollider col;
-
-    private Rigidbody rig;
-    private float movementSpeed;
-
-    void Start()
+    public enum MovementState
     {
-        rig = GetComponent<Rigidbody>();
-        col = GetComponent<CapsuleCollider>();        
+        Walking,
+        Crouched,
+        Running
     }
 
-    void Update()
+    public class PlayerController : MonoBehaviour
     {
-        MovementStates();
-        Movement();        
-    }
 
+        public float WalkSpeed { get; set; } = 7f;
+        public float SprintSpeed { get; set; } = 12f;
+        public float CrouchSpeed { get; set; } = 3f;
 
-    //****************MOVEMENT*******************
-    /*       1. Movement Overview
-             2. Walk         
-             5. Jump
-             6. Mouse Turn
-      ******************************************/
+        public float WalkTurnSpeed { get; set; } = 10f;
+        public float SprintTurnSpeed { get; set; } = 0.001f;
+        public float CrouchTurnSpeed { get; set; } = 20f;
+        public float TurnSpeed { get; set; } = 10f;
 
-    public void Movement()
-    {
-        MouseTurn();
-        Jump();
-        Walk();
-    }
-       
-    /// <summary>
-    /// Main Movement
-    /// movementSpeed set in MovementStates
-    /// </summary>
-    public void Walk()
-    {
-        float x=0f;
-        float z=0f;
-        
-        if (Input.GetKey(KeyCode.A))
+        public float JumpVelocity { get; set; } = 12f;
+
+        public MovementState MovementState { get; set; } = MovementState.Walking;
+
+        public LayerMask GroundLayers;
+        public CapsuleCollider Col;
+
+        private Rigidbody _rig;
+        private float _movementSpeed;
+
+        public void Start()
         {
-            x = movementSpeed * Time.deltaTime * -2.0f;
+            _rig = GetComponent<Rigidbody>();
+            Col = GetComponent<CapsuleCollider>();
         }
-        if (Input.GetKey(KeyCode.D))
+
+        public void Update()
         {
-            x = movementSpeed * Time.deltaTime * 2.0f;
+            MovementStates();
+            Movement();
         }
-        z = movementSpeed * Input.GetAxis("Vertical") * Time.deltaTime * 3.0f;
 
-        transform.Translate(x, 0, z);       
-    }    
-
-    /////////////JUMP////////////////////
-    /// <summary>
-    /// Jump Ability
-    /// See "Better Jump" for jump parabola
-    /// </summary>
-    public void Jump()
-    {
-        if (IsGrounded() && Input.GetKeyDown(KeyCode.Space))
+        /****************MOVEMENT*******************/
+        /*     1. Movement Overview
+        /*     2. Walk         
+        /*     5. Jump
+        /*     6. Mouse Turn
+        /********************************************/
+        public void Movement()
         {
-            rig.velocity = Vector3.up * jumpVelocity;
+            MouseTurn();
+            Jump();
+            Walk();
         }
-    }
 
-    ///////////MOUSE TURN///////////////
-    /// <summary>
-    /// Turns player left and right with mouse
-    /// </summary>
-    public void MouseTurn()
-    {
-        float forward = Input.GetAxis("Vertical");
-        float side = Input.GetAxis("Horizontal");
-        float rotY = Input.GetAxis("Mouse X");
-
-        gameObject.transform.Rotate(0, rotY * turnSpeed, 0);
-        Vector3 speed = new Vector3(forward, 0.0f, side);
-        rig.AddForce(speed);
-    }
-
-    //****************MOVEMENT DETAILS*******************
-    /*          1. Movement States
-                2. Is Grounded
-    ************************************************/
-    
-    ///////////MOVEMENT STATES///////////////////
-    /// <summary>
-    /// Controls which state of movement player is in. 
-    /// Player can only be in one state at a time
-    /// </summary>
-    public void MovementStates()
-    {
-        if (Input.GetKeyDown(KeyCode.LeftControl))
+        /// <summary>
+        /// Main Movement
+        /// movementSpeed set in MovementStates
+        /// </summary>
+        public void Walk()
         {
-            if (isCrouched)
+            var x = 0f;
+
+            if (Input.GetKey(KeyCode.A))
             {
-                isCrouched = false;
-                isWalking = true;
+                x = _movementSpeed * Time.deltaTime * -2.0f;
             }
-            else
+            else if (Input.GetKey(KeyCode.D))
             {
-                isRunning = false;
-                isWalking = false;
-                isCrouched = true;
-                movementSpeed = crouchSpeed;
+                x = _movementSpeed * Time.deltaTime * 2.0f;
+            }
+
+            var z = _movementSpeed * Input.GetAxis("Vertical") * Time.deltaTime * 3.0f;
+
+            transform.Translate(x, 0, z);
+        }
+
+        /////////////JUMP////////////////////
+        /// <summary>
+        /// Jump Ability
+        /// See "Better Jump" for jump parabola
+        /// </summary>
+        public void Jump()
+        {
+            if (IsGrounded() && Input.GetKeyDown(KeyCode.Space))
+            {
+                _rig.velocity = Vector3.up * JumpVelocity;
             }
         }
 
-        if (Input.GetKey(KeyCode.LeftShift))
+        ///////////MOUSE TURN///////////////
+        /// <summary>
+        /// Turns player left and right with mouse
+        /// </summary>
+        public void MouseTurn()
         {
-            isWalking = false;
-            isCrouched = false;
-            isRunning = true;
-            movementSpeed = sprintSpeed;
-        }
-        if (Input.GetKeyUp(KeyCode.LeftShift))
-        {
-            isRunning = false;
-            isWalking = true;
-        }
-        else if (isWalking)
-        {
-            isRunning = false;
-            isCrouched = false;
-            movementSpeed = walkSpeed;
-        }        
-    }     
+            var forward = Input.GetAxis("Vertical");
+            var side = Input.GetAxis("Horizontal");
+            var rotY = Input.GetAxis("Mouse X");
 
-    /// <summary>
-    /// Checks to make sure player rigidbody is touching ground before being allowed to jump again
-    /// </summary>
-    /// <returns></returns>
-    private bool IsGrounded()
-    {
-        return Physics.CheckCapsule(col.bounds.center, new Vector3(col.bounds.center.x, col.bounds.min.y,
-            col.bounds.center.z), col.radius * .9f, groundLayers);
-    }    
+            gameObject.transform.Rotate(0, rotY * TurnSpeed, 0);
+            var speed = new Vector3(forward, 0.0f, side);
+            _rig.AddForce(speed);
+        }
+
+        /****************MOVEMENT DETAILS****************/
+        /*          1. Movement States
+        /*        2. Is Grounded
+        /************************************************/
+
+        ///////////MOVEMENT STATES///////////////////
+        /// <summary>
+        /// Controls which state of movement player is in. 
+        /// Player can only be in one state at a time
+        /// </summary>
+        public void MovementStates()
+        {
+            // If we aren't crouched then crouch, regardless of other states
+            if (Input.GetKeyDown(KeyCode.LeftControl) && MovementState != MovementState.Crouched)
+            {
+                MovementState = MovementState.Crouched;
+                _movementSpeed = CrouchSpeed;
+                Debug.Log("movement state set to crouch");
+            }
+            // if we are crouched then uncrouch
+            else if (Input.GetKeyDown(KeyCode.LeftControl) && MovementState == MovementState.Crouched)
+            {
+                MovementState = MovementState.Walking;
+                _movementSpeed = WalkSpeed;
+                Debug.Log("movement state set to walking");
+            }
+            // if we aren't already running, run
+            else if (Input.GetKey(KeyCode.LeftShift))
+            {
+                MovementState = MovementState.Running;
+                _movementSpeed = SprintSpeed;
+                Debug.Log("movement state set to running");
+            }
+            // if we have been running, stop running
+            else if (MovementState == MovementState.Running)
+            {
+                MovementState = MovementState.Walking;
+                _movementSpeed = WalkSpeed;
+                Debug.Log("movement state set to walking");
+            }
+        }
+
+        /// <summary>
+        /// Checks to make sure player rigidbody is touching ground before being allowed to jump again
+        /// </summary>
+        /// <returns></returns>
+        private bool IsGrounded()
+        {
+            return Physics.CheckCapsule(
+                Col.bounds.center,
+                new Vector3(
+                    Col.bounds.center.x,
+                    Col.bounds.min.y,
+                    Col.bounds.center.z),
+                Col.radius * .9f,
+                GroundLayers);
+        }
+    }
 }

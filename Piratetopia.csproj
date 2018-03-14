@@ -347,13 +347,13 @@
     <Compile Include="Assets\Scripts\Entity\Character.cs" />
     <Compile Include="Assets\Scripts\Entity\Player\BetterJump.cs" />
     <Compile Include="Assets\Scripts\Entity\Player\CameraController.cs" />
-    <Compile Include="Assets\Scripts\Entity\Player\CameraFollow.cs" />
-    <Compile Include="Assets\Scripts\Entity\Player\CameraOrbit.cs" />
-    <Compile Include="Assets\Scripts\Entity\Player\PlayerController.cs" />
     <Compile Include="Assets\Scripts\Entity\Player\PlayerMovement.cs" />
     <Compile Include="Assets\Scripts\Items\Weapons\TypesCursedMedallion.cs" />
     <Compile Include="Assets\Scripts\Items\Weapons\TypesMeleeWeapons.cs" />
     <Compile Include="Assets\Scripts\Items\Weapons\TypesRangedWeapons.cs" />
+    <Compile Include="Assets\Scripts\OldScripts\CameraFollow.cs" />
+    <Compile Include="Assets\Scripts\OldScripts\CameraOrbit.cs" />
+    <Compile Include="Assets\Scripts\OldScripts\PlayerController.cs" />
     <Compile Include="Assets\Scripts\World\ScenerySpawner.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

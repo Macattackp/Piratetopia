@@ -23,12 +23,13 @@ namespace Assets.Scripts.Entity.Player
 
         public LayerMask    GroundLayers;
         public CapsuleCollider Col;
-        public GameObject   followCam;
+        public Transform   followCam;
 
         private Rigidbody   _rig;
         private float       _movementSpeed;
         private float       _rotationVariationX=0f;
-        private float       _followCamRotate;
+        private Quaternion     _followCamRotate;
+        private Vector3     _followCamPosition;
         private float       _rotationSpeed  =10f;
 
         public void Start()
@@ -63,6 +64,7 @@ namespace Assets.Scripts.Entity.Player
         /// </summary>
         public void Walk()
         {
+            _followCamRotate = followCam.rotation;
             float strafe = Input.GetAxis("Horizontal") * _movementSpeed * Time.deltaTime;
             float translation = Input.GetAxis("Vertical") * _movementSpeed * Time.deltaTime;
 
@@ -70,7 +72,7 @@ namespace Assets.Scripts.Entity.Player
 
             if (movement != Vector3.zero)
             {
-                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(movement), _rotationSpeed);
+                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(movement)*_followCamRotate, _rotationSpeed*Time.deltaTime);                
             }
 
             if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D))
@@ -92,7 +94,8 @@ namespace Assets.Scripts.Entity.Player
                 }
                 else
                 {
-                    transform.Translate(0, 0, translation);
+                    transform.Translate(0, 0,translation);
+                    //transform.position = transform.position + followCam.transform.forward * translation * Time.deltaTime;
                 }
             }
         }

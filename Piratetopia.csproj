@@ -348,9 +348,11 @@
     <Compile Include="Assets\Scripts\Entity\Player\BetterJump.cs" />
     <Compile Include="Assets\Scripts\Entity\Player\CameraController.cs" />
     <Compile Include="Assets\Scripts\Entity\Player\PlayerMovement.cs" />
+    <Compile Include="Assets\Scripts\Items\Weapons\Bullet.cs" />
     <Compile Include="Assets\Scripts\Items\Weapons\TypesCursedMedallion.cs" />
     <Compile Include="Assets\Scripts\Items\Weapons\TypesMeleeWeapons.cs" />
     <Compile Include="Assets\Scripts\Items\Weapons\TypesRangedWeapons.cs" />
+    <Compile Include="Assets\Scripts\Items\Weapons\WeaponUse.cs" />
     <Compile Include="Assets\Scripts\OldScripts\CameraFollow.cs" />
     <Compile Include="Assets\Scripts\OldScripts\CameraOrbit.cs" />
     <Compile Include="Assets\Scripts\OldScripts\PlayerController.cs" />

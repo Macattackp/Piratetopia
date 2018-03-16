@@ -9,10 +9,7 @@ namespace Assets.Scripts.Entity.Player
         public float        walkSpeed       = 7f;
         public float        sprintSpeed     = 12f;
         public float        crouchSpeed     = 3f;
-
-        public float        walkTurnSpeed   = 10f;
-        public float        sprintTurnSpeed = 0.001f;
-        public float        crouchTurnSpeed = 20f;
+        
         public float        turnSpeed       = 10f;
 
         public float        jumpVelocity    = 12f;
@@ -27,10 +24,7 @@ namespace Assets.Scripts.Entity.Player
 
         private Rigidbody   _rig;
         private float       _movementSpeed;
-        private float       _rotationVariationX=0f;
         private Quaternion     _followCamRotate;
-        private Vector3     _followCamPosition;
-        private float       _rotationSpeed  =10f;
 
         public void Start()
         {
@@ -42,8 +36,6 @@ namespace Assets.Scripts.Entity.Player
         {
             MovementStates();
             Movement();
-
-            _rotationVariationX = followCam.transform.rotation.x - transform.rotation.x;
         }
 
         /****************MOVEMENT*******************/
@@ -64,42 +56,24 @@ namespace Assets.Scripts.Entity.Player
         /// </summary>
         public void Walk()
         {
-            _followCamRotate = followCam.rotation;
-            float strafe = Input.GetAxis("Horizontal") * _movementSpeed * Time.deltaTime;
-            float translation = Input.GetAxis("Vertical") * _movementSpeed * Time.deltaTime;
+            _followCamRotate = Quaternion.Euler(0,followCam.rotation.y,0);
 
-            Vector3 movement = new Vector3(strafe, 0f, translation);
+            Vector3 movement = Vector3.zero; 
+
+            if (Input.GetKey(KeyCode.W))  {movement += followCam.forward;}
+            if (Input.GetKey(KeyCode.S))  {movement += -followCam.forward;}
+            if (Input.GetKey(KeyCode.A))  {movement += -followCam.right;}
+            if (Input.GetKey(KeyCode.D))  {movement += followCam.right;}
+
+            movement.y = 0;
+            transform.position += movement.normalized * _movementSpeed * Time.deltaTime;
 
             if (movement != Vector3.zero)
             {
-                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(movement)*_followCamRotate, _rotationSpeed*Time.deltaTime);                
-            }
-
-            if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D))
-            {
-                if (Input.GetKey(KeyCode.A))
-                {
-                    transform.Translate(0, 0, -1*strafe);
-                }
-                else
-                {
-                    transform.Translate(0, 0, strafe);
-                }
-            }
-            if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S))
-            {
-                if (Input.GetKey(KeyCode.S))
-                {
-                    transform.Translate(0, 0, -1*translation);
-                }
-                else
-                {
-                    transform.Translate(0, 0,translation);
-                    //transform.position = transform.position + followCam.transform.forward * translation * Time.deltaTime;
-                }
+                transform.rotation = _followCamRotate* Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(movement), turnSpeed * Time.deltaTime);
             }
         }
-
+        
         /////////////JUMP////////////////////
         /// <summary>
         /// Jump Ability
@@ -112,7 +86,6 @@ namespace Assets.Scripts.Entity.Player
                 _rig.velocity = Vector3.up * jumpVelocity;
             }
         }
-
         
 
         /****************MOVEMENT DETAILS****************/
@@ -126,16 +99,16 @@ namespace Assets.Scripts.Entity.Player
         /// Player can only be in one state at a time
         /// </summary>
         public void MovementStates()
-        {
+        {   //Keybindings
             if (Input.GetKeyDown(KeyCode.LeftControl))
             {
-                if (isCrouched)
+                if (!isCrouched)
                 {
-                    isCrouched=false;
+                    isCrouched=true;
                 }
                 else
                 {
-                    isCrouched = true;
+                    isCrouched = false;
                 }
             }
 
@@ -146,11 +119,11 @@ namespace Assets.Scripts.Entity.Player
             }
             else
             {
-                isCrouched = false;
                 isRunning = false;
                 isWalking = true;
             }
 
+            //Speed Assignments
             if (isCrouched)
             {
                 _movementSpeed = crouchSpeed;

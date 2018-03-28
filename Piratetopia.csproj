@@ -348,6 +348,8 @@
     <Compile Include="Assets\Scripts\Entity\Player\BetterJump.cs" />
     <Compile Include="Assets\Scripts\Entity\Player\CameraController.cs" />
     <Compile Include="Assets\Scripts\Entity\Player\PlayerMovement.cs" />
+    <Compile Include="Assets\Scripts\Entity\Reputation.cs" />
+    <Compile Include="Assets\Scripts\Entity\ReputationTracker.cs" />
     <Compile Include="Assets\Scripts\Items\Weapons\Bullet.cs" />
     <Compile Include="Assets\Scripts\Items\Weapons\TypesCursedMedallion.cs" />
     <Compile Include="Assets\Scripts\Items\Weapons\TypesMeleeWeapons.cs" />
